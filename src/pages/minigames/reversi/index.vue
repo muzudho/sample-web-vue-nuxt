@@ -132,6 +132,39 @@
         <p>連続パス回数={{ gameSoft1Ref?.game1PassCount }}</p>
         <p>{{ gameSoft1Ref?.game1IsEnd ? (gameSoft1Ref?.gameIsFullCapacity() ? '満局' : '終局') : '' }}</p>
 
+        <!-- デバッグ情報 -->
+        <v-btn
+            class="code-key"
+            @touchstart.prevent="button1Ref?.press($event, onDebugInfoButtonPressed);"
+            @touchend="button1Ref?.release();"
+            @touchcancel="button1Ref?.release();"
+            @touchleave="button1Ref?.release();"
+            @mousedown.prevent="button1Ref?.handleMouseDown($event, onDebugInfoButtonPressed)"
+            @mouseup="button1Ref?.release();"
+            @mouseleave="button1Ref?.release();"
+        >{{ debugInfo1IsShowing ? '⚙️デバッグ情報を終わる' : '⚙️デバッグ情報を表示' }}</v-btn>
+        <section v-if="debugInfo1IsShowing" class="sec-1">
+            <p>デバッグ：</p>
+
+            <p>マス番号:</p>
+            <div
+                class="mb-6"
+            >
+                <p
+                    v-for="rank in range(0, (gameSoft1Ref?.gameBoard1RankNum ?? 1))"
+                    :key="rank"
+                >
+                    <span
+                        v-for="sq in range(rank * (gameSoft1Ref?.gameBoard1FileNum ?? 1), (rank + 1) * (gameSoft1Ref?.gameBoard1FileNum ?? 1))"
+                        :key="sq"
+                    >
+                        {{ sq.toString().padStart(3, '0') }}&nbsp;
+                    </span><br/>
+                </p>
+            </div>
+
+        </section>
+
     </section>
 
 
@@ -226,6 +259,13 @@
     };
 
 
+    // ++++++++++++++++++++++++++++++++++++++++++
+    // + オブジェクト　＞　デバッグ情報パネル１ +
+    // ++++++++++++++++++++++++++++++++++++++++++
+
+    const debugInfo1IsShowing = ref<boolean>(false);  // デバッグ情報を表示中
+
+
     // ######################
     // # イベントハンドラー #
     // ######################
@@ -305,6 +345,14 @@
 
     function onSpaceButtonReleased() : void {
         gameMachine1Player1Input[" "] = false;
+    }
+
+
+    /**
+     * ［デバッグ情報を表示］ボタン。
+     */
+    function onDebugInfoButtonPressed() : void {
+        debugInfo1IsShowing.value = !debugInfo1IsShowing.value;
     }
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++
